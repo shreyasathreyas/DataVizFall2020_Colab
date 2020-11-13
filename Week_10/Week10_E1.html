@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Census Data</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+<script>
+    d3.csv("Data/us_population_counties_states.csv").then(main)
+    function main(data){
+        let years = d3.range(2011,2020);
+        let birth_columns = d3.map(years,function (d){return `RBIRTH${d}`})
+        let death_columns = d3.map(years,function (d){return `RDEATH${d}`})
+        data = data.filter(function (d){return +d.STATE>0})
+        let dict = {}
+        d3.map(data,function (d){
+             dict[d["NAME"]]={"birth_ratio":[],"death_ratio":[],"POPESTIMATE2019":+d["POPESTIMATE2019"]}
+             birth_columns.forEach(function (b_col)
+             {
+                return dict[d["NAME"]]["birth_ratio"].push(+d[b_col]);
+             })
+            death_columns.forEach(function (b_col)
+            {
+                return dict[d["NAME"]]["death_ratio"].push(+d[b_col]);
+            })
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <title>
+        Sample Circle Pack
+    </title>
+    <style>
+        svg{
+            width: 100vw;
+            height: 100vh;
+        }
+        circle{
+            fill:none;
+            stroke-width: 1px;
+            stroke: #bd7474;
+        }
+    </style>
+</head>
+<body style="height: 100%; margin: 0">
+<svg>
+</svg>
+<script type="text/javascript">
+    let data=[
+        {"parentColumn": "",  "childColumn":"A"},
+        {"parentColumn": "A", "childColumn":"B"},
+        {"parentColumn": "A", "childColumn":"C"},
+        {"parentColumn": "B", "childColumn":"D","val":30},
+        {"parentColumn": "B", "childColumn":"E","val":50},
+        {"parentColumn": "C", "childColumn":"F","val":20},
+        {"parentColumn": "C", "childColumn":"G","val":40},
+        {"parentColumn": "C", "childColumn":"H","val":60}
+    ]
+
+    let svg = d3.select('svg')
+
+    let  stratify_function= d3.stratify()
+        .id(function(d){return d["childColumn"]})
+        .parentId(function(d){return d["parentColumn"]})
+    let data_formatted = stratify_function(data)
+    let data_hierarchy = d3.hierarchy(data_formatted)
+    data_hierarchy.sum(function(d) {
+        return d.data.val;
+    })
+    let packLayout = d3.pack()
+        .size([500, 500]);
+    packLayout(data_hierarchy);
+    let nodes = svg.selectAll('g')
+        .data(data_hierarchy.descendants())
+        .enter()
+        .append('g')
+        .attr("transform",function (d){return `translate(${d.x},${d.y})`})
+    nodes
+        .append("circle")
+        .attr('r', function(d) { return d.r; })
+
+</script>
+
+</body>
+</html>
